@@ -1,0 +1,44 @@
+name: Build and Deploy Backend
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write # Required to push to GHCR
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@v4
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Build and Push to GHCR
+        env:
+          GHCR_USERNAME: ${{ github.actor }}
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ./mvnw compile jib:build
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      # OPTION A: DEPLOY TO RENDER (Simple & Recommended)
+      - name: Trigger Render Deploy
+        run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
+
+      # OPTION B: DEPLOY TO RAILWAY (Uncomment if using Railway)
+      # - name: Install Railway CLI
+      #   run: curl -fsSL https://railway.app/install.sh | sh
+      # - name: Redeploy Railway
+      #   run: railway redeploy -s ${{ secrets.RAILWAY_SERVICE_ID }} -y
+      #   env:
+      #     RAILWAY_TOKEN: ${{ secrets.RAILWAY_API_TOKEN }}
