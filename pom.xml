@@ -27,7 +27,7 @@
         <url/>
     </scm>
     <properties>
-        <java.version>25</java.version>
+        <java.version>21</java.version>
     </properties>
     <dependencies>
         <dependency>
@@ -63,6 +63,11 @@
     </dependencies>
 
     <build>
+        <profiles>
+            <profile>
+                <id>production</id>
+            </profile>
+        </profiles>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
