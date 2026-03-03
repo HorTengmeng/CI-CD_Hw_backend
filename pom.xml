@@ -68,34 +68,33 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>3.4.1</version>
+                <configuration>
+                    <to>
+                        <image>ghcr.io/your-github-username/backend-app</image>
+                        <tags>
+                            <tag>latest</tag>
+                            <tag>${project.version}</tag>
+                        </tags>
+                        <auth>
+                            <username>${env.GHCR_USERNAME}</username>
+                            <password>${env.GHCR_TOKEN}</password>
+                        </auth>
+                    </to>
+                    <container>
+                        <ports>
+                            <port>8080</port>
+                        </ports>
+                        <jvmFlags>
+                            <jvmFlag>-XX:+UseZGC</jvmFlag>
+                            <jvmFlag>-Dspring.threads.virtual.enabled=true</jvmFlag>
+                        </jvmFlags>
+                    </container>
+                </configuration>
+            </plugin>
         </plugins>
-        <plugin>
-            <groupId>com.google.cloud.tools</groupId>
-            <artifactId>jib-maven-plugin</artifactId>
-            <version>3.4.1</version>
-            <configuration>
-                <to>
-                    <image>ghcr.io/your-github-username/backend-app</image>
-                    <tags>
-                        <tag>latest</tag>
-                        <tag>${project.version}</tag>
-                    </tags>
-                    <auth>
-                        <username>${env.GHCR_USERNAME}</username>
-                        <password>${env.GHCR_TOKEN}</password>
-                    </auth>
-                </to>
-                <container>
-                    <ports>
-                        <port>8080</port>
-                    </ports>
-                    <jvmFlags>
-                        <jvmFlag>-XX:+UseZGC</jvmFlag>
-                        <jvmFlag>-Dspring.threads.virtual.enabled=true</jvmFlag>
-                    </jvmFlags>
-                </container>
-            </configuration>
-        </plugin>
     </build>
-
 </project>
