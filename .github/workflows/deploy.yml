@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write # Required to push to GHCR
+      packages: write
 
     steps:
       - uses: actions/checkout@v4
@@ -22,23 +22,20 @@ jobs:
           cache: 'maven'
 
       - name: Build and Push to GHCR
-        env:
-          GHCR_USERNAME: ${{ github.actor }}
-          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: ./mvnw compile jib:build
+        run: |
+          ./mvnw compile jib:build -DskipTests \
+            -Djib.to.image=ghcr.io/${{ github.actor }}/ci-cd_hw_backend:latest \
+            -Djib.to.auth.username=${{ github.actor }} \
+            -Djib.to.auth.password=${{ secrets.GITHUB_TOKEN }}
 
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
     steps:
-      # OPTION A: DEPLOY TO RENDER (Simple & Recommended)
-      - name: Trigger Render Deploy
-        run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
+      - name: Install Railway CLI
+        run: curl -fsSL https://railway.app/install.sh | sh
 
-      # OPTION B: DEPLOY TO RAILWAY (Uncomment if using Railway)
-      # - name: Install Railway CLI
-      #   run: curl -fsSL https://railway.app/install.sh | sh
-      # - name: Redeploy Railway
-      #   run: railway redeploy -s ${{ secrets.RAILWAY_SERVICE_ID }} -y
-      #   env:
-      #     RAILWAY_TOKEN: ${{ secrets.RAILWAY_API_TOKEN }}
+      - name: Redeploy on Railway
+        run: railway redeploy -s ${{ secrets.RAILWAY_SERVICE_ID }} -y
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_API_TOKEN }}
