@@ -6,29 +6,19 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>4.0.3</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/>
     </parent>
+
     <groupId>com.meng</groupId>
     <artifactId>testcicd</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>testcicd</name>
     <description>Demo project for Spring Boot</description>
-    <url/>
-    <licenses>
-        <license/>
-    </licenses>
-    <developers>
-        <developer/>
-    </developers>
-    <scm>
-        <connection/>
-        <developerConnection/>
-        <tag/>
-        <url/>
-    </scm>
+
     <properties>
-        <java.version>21</java.version>
+        <java.version>25</java.version>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -38,7 +28,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webmvc</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-docker-compose</artifactId>
@@ -73,16 +62,12 @@
                 <artifactId>jib-maven-plugin</artifactId>
                 <version>3.4.1</version>
                 <configuration>
+                    <from>
+                        <image>eclipse-temurin:25-jre</image>
+                    </from>
                     <to>
-                        <image>ghcr.io/your-github-username/backend-app</image>
-                        <tags>
-                            <tag>latest</tag>
-                            <tag>${project.version}</tag>
-                        </tags>
-                        <auth>
-                            <username>${env.GHCR_USERNAME}</username>
-                            <password>${env.GHCR_TOKEN}</password>
-                        </auth>
+                        <!-- ✅ lowercase image name -->
+                        <image>ghcr.io/hortengmeng/ci-cd_hw_backend:latest</image>
                     </to>
                     <container>
                         <ports>
@@ -97,9 +82,11 @@
             </plugin>
         </plugins>
     </build>
+
     <profiles>
         <profile>
             <id>production</id>
         </profile>
     </profiles>
+
 </project>
