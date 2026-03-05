@@ -41,7 +41,6 @@ jobs:
 
       - name: Build and Push to GHCR
         run: |
-          IMAGE_NAME=$(echo "ghcr.io/${{ github.actor }}/ci-cd_hw_backend:latest" | tr '[:upper:]' '[:lower:]')
           ./mvnw compile jib:build -DskipTests \
             -Djib.to.image=$IMAGE_NAME \
             -Djib.to.auth.username=${{ github.actor }} 
