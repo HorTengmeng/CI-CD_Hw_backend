@@ -28,7 +28,6 @@ jobs:
       - name: Build and Push to GHCR
         run: |
           ./mvnw compile jib:build -DskipTests \
-            -Djib.to.image=ghcr.io/${{ github.actor }}/ci-cd_hw_backend:latest \
             -Djib.to.auth.username=${{ github.actor }} \
             -Djib.to.auth.password=${{ secrets.GITHUB_TOKEN }}
 
@@ -36,12 +35,10 @@ jobs:
     needs: build-and-push
     runs-on: ubuntu-latest
     steps:
-      - name: Grant execute permission to mvnw
-        run: chmod +x mvnw
+      - name: Install Railway CLI
+        run: curl -fsSL https://railway.app/install.sh | sh
 
-      - name: Build and Push to GHCR
-        run: |
-          ./mvnw compile jib:build -DskipTests \
-            -Djib.to.image=$IMAGE_NAME \
-            -Djib.to.auth.username=${{ github.actor }} 
-            -Djib.to.auth.password=${{ secrets.GITHUB_TOKEN }}
+      - name: Redeploy on Railway
+        run: railway redeploy -s ${{ secrets.RAILWAY_SERVICE_ID }} -y
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_API_TOKEN }}
