@@ -36,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install Railway CLI
-        run: curl -fsSL https://railway.app/install.sh | sh
+        run: npm install -g @railway/cli   # ← changed this line
 
       - name: Redeploy on Railway
         run: railway redeploy -s ${{ secrets.RAILWAY_SERVICE_ID }} -y
